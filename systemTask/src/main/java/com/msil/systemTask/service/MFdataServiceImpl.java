@@ -2,9 +2,11 @@ package com.msil.systemTask.service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import com.msil.systemTask.dto.DateNav;
 import com.msil.systemTask.dto.FilterRequestDTO;
 import com.msil.systemTask.dto.FilterdDateNav;
 import com.msil.systemTask.dto.MFdataByCodeDTO;
+import com.msil.systemTask.dto.MFdataDTO;
 import com.msil.systemTask.dto.MFdataWithFilterDTO;
 import com.msil.systemTask.entity.MFdata;
 import com.msil.systemTask.exception.MFException;
@@ -28,6 +31,22 @@ public class MFdataServiceImpl implements MFdataService{
 
 	@Autowired
 	private MFdataRepository mfDataRepository;
+	
+	@Override
+	public void saveMfDataByApiCall() throws MFException {
+		// TODO Auto-generated method stub
+		List<MFdata> allMfData=new ArrayList<MFdata>();
+		
+		for(MFdataDTO dto:getAllmfdata()) {
+			MFdata entity=new MFdata();
+			entity.setSchemeCode(dto.getSchemeCode());
+			entity.setSchemeName(dto.getSchemeName());
+			allMfData.add(entity);
+		}
+				
+		
+		mfDataRepository.saveAll(allMfData);
+	}
 	
 	@Override
 	public MFdataByCodeDTO getMFdataBySchemeName(String schemeName) throws MFException {
@@ -65,21 +84,18 @@ public class MFdataServiceImpl implements MFdataService{
 		// TODO Auto-generated method stub
 		FilterdDateNav dateNav=new FilterdDateNav();
 		
-		//not able to understand filtration criteria.
+		
 		Date date = new Date();
 		SimpleDateFormat obj = new SimpleDateFormat("dd-MM-yyyy");
-		 String str = obj.format(date);
+		String str = obj.format(date);
 		
-	 
-        
-       
-		
+		Date date2 = obj.parse(str);//system date
 		for(DateNav dn:data) {
 			Date date1 = obj.parse(dn.getDate());   
-	        Date date2 = obj.parse(str);//system date
+	        
 	        long time_difference = date2.getTime() - date1.getTime();
-			long days_difference = (time_difference / (1000*60*60*24)) % 365;
-			long years_difference = (time_difference / (1000l*60*60*24*365));
+			long days_difference = TimeUnit.DAYS.convert(time_difference,TimeUnit.MILLISECONDS);
+		
 	        
 			
 			if(filter.equals("1W" )&& days_difference<=7) {
@@ -88,10 +104,10 @@ public class MFdataServiceImpl implements MFdataService{
 			}else if(filter.equals("1M")&& days_difference<=30) {
 				dateNav.getDate().add(dn.getDate());
 				dateNav.getNav().add(dn.getNav());
-			}else if(filter.equals("1Y")&& years_difference<=1) {
+			}else if(filter.equals("1Y")&& days_difference<=365) {
 				dateNav.getDate().add(dn.getDate());
 				dateNav.getNav().add(dn.getNav());
-			}else if(filter.equals("5y")&& years_difference<=5) {
+			}else if(filter.equals("5y")&& days_difference<=5*365) {
 				dateNav.getDate().add(dn.getDate());
 				dateNav.getNav().add(dn.getNav());
 			}
@@ -110,5 +126,16 @@ public class MFdataServiceImpl implements MFdataService{
 		
 		return restTemplate.getForObject(url, MFdataByCodeDTO.class);
 	}
+	
+	private List<MFdataDTO> getAllmfdata(){
+		String url=SuitConstant.uri;
+		RestTemplate restTemplate=new RestTemplate();
+		@SuppressWarnings("unchecked")
+		List<MFdataDTO> allMfData=(List<MFdataDTO>) restTemplate.getForObject(url, MFdataDTO.class);
+		return allMfData;
+	}
+
+
+
 
 }

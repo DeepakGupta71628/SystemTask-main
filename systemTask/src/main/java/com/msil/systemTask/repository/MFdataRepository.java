@@ -1,8 +1,8 @@
 package com.msil.systemTask.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import com.msil.systemTask.entity.MFdata;
 
-public interface MFdataRepository extends CrudRepository<MFdata, String>{
+public interface MFdataRepository extends JpaRepository<MFdata, String>{
 
 }

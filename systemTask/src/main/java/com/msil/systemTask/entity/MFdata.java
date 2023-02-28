@@ -1,16 +1,13 @@
 package com.msil.systemTask.entity;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
-@Entity
+@Entity  (name="mfdata")
 public class MFdata {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	String schemeName;
-	Integer schemeCode ;
+	Integer schemeCode;
 	
 	public String getSchemeName() {
 		return schemeName;

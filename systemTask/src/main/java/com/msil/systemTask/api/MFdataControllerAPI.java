@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.msil.systemTask.dto.FilterRequestDTO;
 import com.msil.systemTask.dto.MFdataByCodeDTO;
@@ -19,18 +18,26 @@ import com.msil.systemTask.exception.MFException;
 import com.msil.systemTask.service.MFdataService;
 
 @RestController
-@CrossOrigin
-@RequestMapping(value = "/mfdata")
+@RequestMapping("/mfdata")
 public class MFdataControllerAPI {
 	
 	@Autowired
 	private MFdataService mFdataService;
 	
-	@GetMapping(value = "/get/{schemeName}")
+	@GetMapping("/add-all")
+	public ResponseEntity<String> save() throws MFException {
+		
+		mFdataService.saveMfDataByApiCall();
+		return new ResponseEntity<>("Success", HttpStatus.OK);
+	}
+	
+	@GetMapping("/get/{schemeName}")
 	public ResponseEntity<MFdataByCodeDTO> getmfdataBySchemeName(@PathVariable String schemeName) throws MFException {
-		MFdataByCodeDTO mfdataScheme = mFdataService.getMFdataBySchemeName(schemeName);
+		System.out.println("hitting");
+		MFdataByCodeDTO mfdataScheme = mFdataService.getMFdataBySchemeName("DSP Bond Fund - IDCW");
 		return new ResponseEntity<>(mfdataScheme, HttpStatus.OK);
 	}
+	
 	
 	@GetMapping(value = "/get-by-filter")
 	public ResponseEntity<MFdataWithFilterDTO> getmfdataByFilter(@RequestBody  FilterRequestDTO dto) throws MFException, ParseException {
