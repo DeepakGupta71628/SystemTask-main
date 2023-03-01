@@ -12,4 +12,5 @@ public interface MFdataService {
 	public MFCompleteData getMFdataBySchemeName(String schemeName) throws MFException;
 	public MFdataWithFilterDTO getmfdataByFilter(FilterRequestDTO dto) throws MFException, ParseException;
 	public void saveMfDataByApiCall() throws MFException;
+//	public List<MFdata> saveMfDataByApiCall() throws MFException;
 }

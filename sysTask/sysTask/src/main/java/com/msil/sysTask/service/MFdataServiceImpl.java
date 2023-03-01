@@ -2,29 +2,20 @@ package com.msil.sysTask.service;
 
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
-
 import com.msil.sysTask.dto.DateNav;
 import com.msil.sysTask.dto.FilterRequestDTO;
 import com.msil.sysTask.dto.FilterdDateNav;
 import com.msil.sysTask.dto.MFCompleteData;
-import com.msil.sysTask.dto.MFdataDTO;
 import com.msil.sysTask.dto.MFdataWithFilterDTO;
 import com.msil.sysTask.entity.MFdata;
 import com.msil.sysTask.exception.MFException;
@@ -45,11 +36,24 @@ public class MFdataServiceImpl implements MFdataService{
 	public void saveMfDataByApiCall() throws MFException {
 		// TODO Auto-generated method stub
 		List<MFdata> allMfData=getAllmfdata();
-		System.out.println("running...");	
-		//mfDataRepository.save(new MFdata("checked data",1234567));
+
+		//mfDataRepository.save(new MFdata("checked data",1234567));	
+		//mfDataRepository.saveAllAndFlush(null);
+		
 		mfDataRepository.saveAll(allMfData);
+
 	}
 	
+//	@Override
+//	public List<MFdata> saveMfDataByApiCall() throws MFException {
+//		// TODO Auto-generated method stub
+//		List<MFdata> allMfData=getAllmfdata();
+//		System.out.println("running...");	
+//		//mfDataRepository.save(new MFdata("checked data",1234567));
+//		mfDataRepository.saveAll(allMfData);
+//		return allMfData;
+//	}
+//	
 	@Override
 	public MFCompleteData getMFdataBySchemeName(String schemeName) throws MFException {
 		// TODO Auto-generated method stub
@@ -116,6 +120,7 @@ public class MFdataServiceImpl implements MFdataService{
 	}
 
 	//Creating rest template obj to get json response
+	@Async("taskExecutor")
 	private MFCompleteData getMFdataBySchemeCode(Integer schemeCode) {
 		// TODO Auto-generated method stub
 		String url=SuitConstant.uri+"/"+schemeCode;
@@ -131,8 +136,6 @@ public class MFdataServiceImpl implements MFdataService{
 		
 		ResponseEntity<MFdata[]> response=restTemplate.getForEntity(url,MFdata[].class );
 		MFdata[] allMFData=response.getBody();
-		System.out.println(response);
-		
 		
 		
 		

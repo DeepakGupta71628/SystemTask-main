@@ -34,6 +34,13 @@ public class MFdataControllerAPI {
 		return new ResponseEntity<>("Success", HttpStatus.OK);
 	}
 	
+//	@GetMapping("/add-all")
+//	public ResponseEntity<List<MFdata>> save() throws MFException {
+//		
+//		List<MFdata> allMfData=mFdataService.saveMfDataByApiCall();
+//		return new ResponseEntity<>(allMfData, HttpStatus.OK);
+//	}
+	
 	@GetMapping("/get/{schemeName}")
 	public ResponseEntity<MFCompleteData> getmfdataBySchemeName(@PathVariable String schemeName) throws MFException {
 
